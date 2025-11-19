@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Bot } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 export const TestAI: React.FC = () => {
   const [claudeResult, setClaudeResult] = useState<string>('');
@@ -12,7 +13,7 @@ export const TestAI: React.FC = () => {
     setClaudeLoading(true);
     setClaudeResult('');
     try {
-      const response = await fetch('http://localhost:3001/api/test-claude', {
+      const response = await fetch(`${API_BASE_URL}/api/test-claude`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +37,7 @@ export const TestAI: React.FC = () => {
     setGeminiLoading(true);
     setGeminiResult('');
     try {
-      const response = await fetch('http://localhost:3001/api/test-gemini', {
+      const response = await fetch(`${API_BASE_URL}/api/test-gemini`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

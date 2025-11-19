@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 interface CreateAppModalProps {
   isOpen: boolean;
@@ -117,7 +118,7 @@ export const CreateAppModal: React.FC<CreateAppModalProps> = ({ isOpen, onClose 
         });
       }, 500); // Check progress every 500ms
 
-      const response = await fetch('http://localhost:3001/api/create-app-plan', {
+      const response = await fetch(`${API_BASE_URL}/api/create-app-plan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +161,7 @@ export const CreateAppModal: React.FC<CreateAppModalProps> = ({ isOpen, onClose 
     setIsImproving(true);
 
     try {
-      const response = await fetch('http://localhost:3001/api/improve-prompt', {
+      const response = await fetch(`${API_BASE_URL}/api/improve-prompt`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

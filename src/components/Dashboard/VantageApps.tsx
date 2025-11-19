@@ -4,6 +4,7 @@ import { AppCard } from './AppCard';
 import { CreateAppModal } from './CreateAppModal';
 import { AppViewer } from './AppViewer';
 import { TestAI } from './TestAI';
+import { API_BASE_URL } from '../../config/api';
 
 interface GeneratedApp {
   id: string;
@@ -29,7 +30,7 @@ export const VantageApps: React.FC = () => {
 
   const loadGeneratedApps = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/generated-apps');
+      const response = await fetch(`${API_BASE_URL}/api/generated-apps`);
       const data = await response.json();
       if (data.success) {
         setGeneratedApps(data.apps || []);
@@ -50,7 +51,7 @@ export const VantageApps: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/generated-apps/${appId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/generated-apps/${appId}`, {
         method: 'DELETE'
       });
 
@@ -78,7 +79,7 @@ export const VantageApps: React.FC = () => {
     setTestResult('Sending request to Claude...');
 
     try {
-      const response = await fetch('http://localhost:3001/api/test-claude', {
+      const response = await fetch(`${API_BASE_URL}/api/test-claude`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
