@@ -1,10 +1,12 @@
 import React from 'react';
-import { Menu, Search, Bell, ShoppingCart, User } from 'lucide-react';
+import { Menu, Search, Bell, ShoppingCart, User, LogOut } from 'lucide-react';
 interface HeaderProps {
   onMenuToggle: () => void;
+  onLogout?: () => void;
 }
 export const Header: React.FC<HeaderProps> = ({
-  onMenuToggle
+  onMenuToggle,
+  onLogout
 }) => {
   return <header className="h-16 bg-white border-b border-gray-200 flex items-center px-4">
       <button className="mr-4 text-gray-600 hover:text-gray-900 focus:outline-none" onClick={onMenuToggle}>
@@ -27,6 +29,15 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
         <ShoppingCart size={20} className="text-gray-600 cursor-pointer" />
         <User size={20} className="text-gray-600 cursor-pointer" />
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="text-gray-600 hover:text-red-600 transition-colors"
+            title="Logout"
+          >
+            <LogOut size={20} />
+          </button>
+        )}
       </div>
     </header>;
 };
