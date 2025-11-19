@@ -342,6 +342,8 @@ app.post('/api/test-gemini', async (req, res) => {
   const { prompt = 'Say hello and tell me what you can do in one sentence' } = req.body;
 
   console.log('Testing Gemini 3 with prompt:', prompt);
+  console.log('GEMINI_API_KEY available:', !!process.env.GEMINI_API_KEY);
+  console.log('GEMINI_API_KEY length:', process.env.GEMINI_API_KEY?.length || 0);
 
   try {
     const provider = getAIProvider('gemini');
@@ -357,9 +359,11 @@ app.post('/api/test-gemini', async (req, res) => {
     });
   } catch (error) {
     console.error('Gemini 3 test failed:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
+      details: process.env.NODE_ENV === 'production' ? undefined : error.stack
     });
   }
 });
