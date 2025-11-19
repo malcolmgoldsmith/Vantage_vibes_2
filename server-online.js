@@ -20,14 +20,18 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Initialize Gemini AI client (REQUIRED for online version)
-let genAI;
-if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
-  genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  console.log('[ONLINE] Gemini API initialized successfully - Gemini-only mode active');
-} else {
-  console.error('[ONLINE] CRITICAL: GEMINI_API_KEY not configured. Server cannot function without it.');
-  throw new Error('GEMINI_API_KEY is required for online version');
+// Lazy-initialize Gemini AI client (loaded on first use to prevent cold start crashes)
+let genAI = null;
+
+function getGeminiClient() {
+  if (!genAI) {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
+      throw new Error('GEMINI_API_KEY is required but not configured in environment variables');
+    }
+    genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    console.log('[ONLINE] Gemini API initialized successfully - Gemini-only mode active');
+  }
+  return genAI;
 }
 
 // ==================== AI PROVIDER ABSTRACTION LAYER ====================
@@ -55,14 +59,13 @@ class AIProvider {
 class GeminiProvider extends AIProvider {
   constructor() {
     super();
-    if (!genAI) {
-      throw new Error('Gemini API not configured. Please set GEMINI_API_KEY in .env file.');
-    }
+    // Gemini client is lazy-loaded on first use via getGeminiClient()
   }
 
   async generateText(prompt) {
     try {
-      const result = await genAI.models.generateContent({
+      const client = getGeminiClient(); // Lazy load on first use
+      const result = await client.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: prompt,
         generationConfig: {
