@@ -82,5 +82,14 @@
     "createdAt": "2025-11-19T01:21:24.641Z",
     "description": "Create vibrant 2D plastic brick art",
     "aiProvider": "gemini"
+  },
+  {
+    "id": "1763516159623",
+    "name": "SnapBricks",
+    "componentName": "Snapbricks",
+    "fileName": "Snapbricks.tsx",
+    "createdAt": "2025-11-19T01:35:59.623Z",
+    "description": "Build with colorful LEGO blocks",
+    "aiProvider": "claude"
   }
 ]
