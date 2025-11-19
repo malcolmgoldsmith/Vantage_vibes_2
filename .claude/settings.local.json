@@ -24,7 +24,8 @@
       "Bash(git add:*)",
       "Bash(dir /b nul 2)",
       "Bash(git commit:*)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []
