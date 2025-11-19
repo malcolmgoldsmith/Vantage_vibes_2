@@ -368,6 +368,18 @@ app.post('/api/test-gemini', async (req, res) => {
   }
 });
 
+// Diagnostic endpoint to check environment
+app.get('/api/env-check', (req, res) => {
+  res.json({
+    success: true,
+    hasGeminiKey: !!process.env.GEMINI_API_KEY,
+    keyLength: process.env.GEMINI_API_KEY?.length || 0,
+    nodeEnv: process.env.NODE_ENV,
+    vercelEnv: process.env.VERCEL,
+    allEnvKeys: Object.keys(process.env).filter(key => key.includes('GEMINI') || key.includes('API'))
+  });
+});
+
 // Endpoint to create an actual app
 app.post('/api/create-app-plan', async (req, res) => {
   const { description, aiProvider = 'claude' } = req.body;
