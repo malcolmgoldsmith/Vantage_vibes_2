@@ -64,32 +64,5 @@
     "createdAt": "2025-11-18T21:27:13.761Z",
     "description": "Beautiful glass-styled local Tic-Tac-Toe",
     "aiProvider": "gemini"
-  },
-  {
-    "id": "1763514898778",
-    "name": "Emerald Tac Toe",
-    "componentName": "EmeraldTacToe",
-    "fileName": "EmeraldTacToe.tsx",
-    "createdAt": "2025-11-19T01:14:58.778Z",
-    "description": "Stylish local two-player Tic-Tac-Toe.",
-    "aiProvider": "gemini"
-  },
-  {
-    "id": "1763515284641",
-    "name": "Snap Bricks",
-    "componentName": "SnapBricks",
-    "fileName": "SnapBricks.tsx",
-    "createdAt": "2025-11-19T01:21:24.641Z",
-    "description": "Create vibrant 2D plastic brick art",
-    "aiProvider": "gemini"
-  },
-  {
-    "id": "1763516159623",
-    "name": "SnapBricks",
-    "componentName": "Snapbricks",
-    "fileName": "Snapbricks.tsx",
-    "createdAt": "2025-11-19T01:35:59.623Z",
-    "description": "Build with colorful LEGO blocks",
-    "aiProvider": "claude"
   }
 ]
