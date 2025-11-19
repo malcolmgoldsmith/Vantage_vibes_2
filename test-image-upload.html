@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Gemini Image Upload & Edit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #555;
+            font-size: 18px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .test-generate {
+            background: #2196F3;
+        }
+        .test-generate:hover {
+            background: #0b7dda;
+        }
+        .image-preview {
+            margin: 15px 0;
+            max-width: 100%;
+        }
+        .image-preview img {
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 15px 0;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Gemini Image Upload & Edit Test</h1>
+
+        <div class="info">
+            <strong>Purpose:</strong> Test that uploaded images are correctly converted to base64 and passed to Gemini's edit-image endpoint.
+        </div>
+
+        <!-- Test 1: Text-to-Image Generation -->
+        <div class="section">
+            <h2>Test 1: Text-to-Image (Generate)</h2>
+            <p>Generate a new image from a text prompt (no upload needed)</p>
+
+            <input
+                type="text"
+                id="generatePrompt"
+                placeholder="e.g., A cute robot assistant"
+                value="A cute robot assistant"
+            />
+
+            <button class="test-generate" onclick="testGenerate()">
+                Generate Image
+            </button>
+
+            <div id="generateStatus"></div>
+            <div id="generatePreview" class="image-preview"></div>
+            <pre id="generateResponse"></pre>
+        </div>
+
+        <!-- Test 2: Image-to-Image Editing -->
+        <div class="section">
+            <h2>Test 2: Image-to-Image (Edit Upload)</h2>
+            <p>Upload an image and apply a transformation</p>
+
+            <input
+                type="file"
+                id="imageUpload"
+                accept="image/*"
+                onchange="previewImage()"
+            />
+
+            <div id="uploadPreview" class="image-preview"></div>
+
+            <input
+                type="text"
+                id="editPrompt"
+                placeholder="e.g., Add a puffer jacket to this pet"
+                value="Add a puffer jacket to this animal"
+            />
+
+            <button onclick="testEdit()" id="editBtn" disabled>
+                Edit Uploaded Image
+            </button>
+
+            <div id="editStatus"></div>
+            <div id="editPreview" class="image-preview"></div>
+            <pre id="editResponse"></pre>
+        </div>
+
+        <!-- Test 3: Base64 Conversion -->
+        <div class="section">
+            <h2>Test 3: Base64 Conversion Check</h2>
+            <p>Verify that File → base64 conversion works correctly</p>
+
+            <input
+                type="file"
+                id="base64Upload"
+                accept="image/*"
+                onchange="testBase64Conversion()"
+            />
+
+            <div id="base64Status"></div>
+            <pre id="base64Output"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to convert File to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64 = reader.result;
+                    // Remove data URI prefix (data:image/png;base64,)
+                    const base64Data = base64.split(',')[1];
+                    resolve(base64Data);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Preview uploaded image
+        function previewImage() {
+            const file = document.getElementById('imageUpload').files[0];
+            const preview = document.getElementById('uploadPreview');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Uploaded image" />`;
+                    document.getElementById('editBtn').disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Test 1: Generate image from text
+        async function testGenerate() {
+            const prompt = document.getElementById('generatePrompt').value;
+            const statusDiv = document.getElementById('generateStatus');
+            const previewDiv = document.getElementById('generatePreview');
+            const responseDiv = document.getElementById('generateResponse');
+
+            statusDiv.innerHTML = '<div class="status loading">⏳ Generating image...</div>';
+            previewDiv.innerHTML = '';
+            responseDiv.textContent = '';
+
+            try {
+                const response = await fetch('http://localhost:3001/api/gemini/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        aspectRatio: '1:1'
+                    })
+                });
+
+                const data = await response.json();
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+
+                if (data.success) {
+                    statusDiv.innerHTML = '<div class="status success">✅ Image generated successfully!</div>';
+                    previewDiv.innerHTML = `<img src="${data.imageUrl}" alt="Generated image" />`;
+                } else {
+                    statusDiv.innerHTML = `<div class="status error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+                responseDiv.textContent = error.stack;
+            }
+        }
+
+        // Test 2: Edit uploaded image
+        async function testEdit() {
+            const file = document.getElementById('imageUpload').files[0];
+            const prompt = document.getElementById('editPrompt').value;
+            const statusDiv = document.getElementById('editStatus');
+            const previewDiv = document.getElementById('editPreview');
+            const responseDiv = document.getElementById('editResponse');
+
+            if (!file) {
+                statusDiv.innerHTML = '<div class="status error">❌ Please upload an image first</div>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<div class="status loading">⏳ Converting to base64...</div>';
+            previewDiv.innerHTML = '';
+            responseDiv.textContent = '';
+
+            try {
+                // Convert file to base64
+                const base64Data = await fileToBase64(file);
+
+                statusDiv.innerHTML = '<div class="status loading">⏳ Sending to Gemini for editing...</div>';
+
+                console.log('Sending edit request with:');
+                console.log('- Prompt:', prompt);
+                console.log('- Base64 length:', base64Data.length);
+                console.log('- Base64 preview:', base64Data.substring(0, 100) + '...');
+
+                const response = await fetch('http://localhost:3001/api/gemini/edit-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        inputImage: base64Data
+                    })
+                });
+
+                const data = await response.json();
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+
+                if (data.success) {
+                    statusDiv.innerHTML = '<div class="status success">✅ Image edited successfully!</div>';
+                    previewDiv.innerHTML = `<img src="${data.imageUrl}" alt="Edited image" />`;
+                } else {
+                    statusDiv.innerHTML = `<div class="status error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+                responseDiv.textContent = error.stack;
+                console.error('Edit error:', error);
+            }
+        }
+
+        // Test 3: Base64 conversion verification
+        async function testBase64Conversion() {
+            const file = document.getElementById('base64Upload').files[0];
+            const statusDiv = document.getElementById('base64Status');
+            const outputDiv = document.getElementById('base64Output');
+
+            if (!file) return;
+
+            statusDiv.innerHTML = '<div class="status loading">⏳ Converting to base64...</div>';
+
+            try {
+                const base64Data = await fileToBase64(file);
+
+                statusDiv.innerHTML = '<div class="status success">✅ Conversion successful!</div>';
+                outputDiv.textContent = `File name: ${file.name}
+File size: ${file.size} bytes
+File type: ${file.type}
+Base64 length: ${base64Data.length} characters
+Base64 preview (first 200 chars):
+${base64Data.substring(0, 200)}...
+
+✅ Base64 data is ready to be sent to Gemini!`;
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+                outputDiv.textContent = error.stack;
+            }
+        }
+    </script>
+</body>
+</html>
