@@ -32,29 +32,12 @@
     "description": "Glassmorphic tic-tac-toe with stunning effects"
   },
   {
-    "id": "1763485925421",
-    "name": "Pet Puffer",
-    "componentName": "PetPuffer",
-    "fileName": "PetPuffer.tsx",
-    "createdAt": "2025-11-18T17:12:05.421Z",
-    "description": "Dress your pet in puffer jackets"
-  },
-  {
     "id": "1763488236901",
     "name": "Pawsitive Portraits",
     "componentName": "PawsitivePortraits",
     "fileName": "PawsitivePortraits.tsx",
     "createdAt": "2025-11-18T17:50:36.901Z",
     "description": "Transform pets into whimsical art"
-  },
-  {
-    "id": "1763498527197",
-    "name": "Pop Tac Toe",
-    "componentName": "PopTacToe",
-    "fileName": "PopTacToe.tsx",
-    "createdAt": "2025-11-18T20:42:07.197Z",
-    "description": "Snappy, modern two-player Tic Tac Toe",
-    "aiProvider": "gemini"
   },
   {
     "id": "1763501233761",
